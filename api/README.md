@@ -13,3 +13,4 @@ It is implemented using Node, Express, and MongoDB with Mongoose as the DB conne
 ## Extra info
 
 The default port is 9000, you can set the PORT as an ENV variable to your favorite port.
+The entry point of the app is [app.js](https://github.com/ArashSasani/artwork-shop/blob/master/api/app.js)
