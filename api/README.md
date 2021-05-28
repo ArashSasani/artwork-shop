@@ -1,6 +1,6 @@
 ## Info
 
-This is the backend API for the PoC e-commerce project.
+This is the backend API for the PoC of the e-commerce project.
 It is implemented using Node, Express, and MongoDB with Mongoose as the DB connection tool.
 
 ## Installation
