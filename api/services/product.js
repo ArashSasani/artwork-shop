@@ -25,7 +25,7 @@ async function getTotalCount({
   if (categories) {
     query = query.find({ "category.name": { $in: categories.split(",") } });
   }
-  query = query.countDocuments();
+  count = query.countDocuments();
   //console.log(`total count is: ${count}`);
   return count;
 }
@@ -38,10 +38,10 @@ async function get({
   sortItem = 0,
   sortOrder = "asc",
 }) {
-  //sortItem filter
+  //sortItem
   let sortItemList = ["name", "price"];
   let selectedSortItem = sortItemList[sortItem];
-  //sortOrder filter
+  //sortOrder
   let selectedSortOrder = sortOrder === "asc" ? 1 : -1;
 
   //query

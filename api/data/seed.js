@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Category } = require("../models/category");
+const { create: createCategory } = require("../services/category");
 const { create: createProduct } = require("../services/product");
 
 //db connection
@@ -14,6 +15,10 @@ mongoose
 const peopleCategory = new Category({ name: "people" });
 const foodCategory = new Category({ name: "food" });
 const landmarksCategory = new Category({ name: "landmarks" });
+
+createCategory(peopleCategory);
+createCategory(foodCategory);
+createCategory(landmarksCategory);
 
 createProduct({
   name: "Red Bench",
