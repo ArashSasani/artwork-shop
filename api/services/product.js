@@ -1,67 +1,62 @@
 const Product = require("../models/product");
 
+//price filter
+let priceList = [
+  { $lt: 20 },
+  { $lte: 100, $gte: 20 },
+  { $lte: 200, $gt: 100 },
+  { $gt: 200 },
+  { $gte: 0 }, //all
+];
+
 async function getFeatured() {
   const product = await Product.findOne({ featured: true });
   //console.log(`record fetched: ${product}`);
   return product;
 }
 
-async function getTotalCount({ categories = "", price: priceIndex = 4 }) {
-  //price filter
-  let priceList = [
-    { $lt: 20 },
-    { $lte: 100, $gte: 20 },
-    { $lte: 200, $gt: 100 },
-    { $gt: 200 },
-    { $gte: 0 }, //all
-  ];
-  const count = categories
-    ? await Product.find({
-        category: { $in: categories.split(",") },
-      })
-        .find({ price: priceList[priceIndex] })
-        .countDocuments()
-    : await Product.find()
-        .find({ price: priceList[priceIndex] })
-        .countDocuments();
+async function getTotalCount({
+  categories = "",
+  price: priceIndex = priceList.length - 1,
+}) {
+  //query
+  let query = Product.find({ price: priceList[priceIndex] });
+  //filter
+  if (categories) {
+    query = query.find({ "category.name": { $in: categories.split(",") } });
+  }
+  query = query.countDocuments();
   //console.log(`total count is: ${count}`);
   return count;
 }
 
 async function get({
   page,
-  pageSize = 6,
+  pageSize,
   categories = "",
-  price: priceIndex = 4,
+  price: priceIndex = priceList.length - 1,
   sortItem = 0,
   sortOrder = "asc",
 }) {
-  //price filter
-  let priceList = [
-    { $lt: 20 },
-    { $lte: 100, $gte: 20 },
-    { $lte: 200, $gt: 100 },
-    { $gt: 200 },
-    { $gte: 0 }, //all
-  ];
   //sortItem filter
   let sortItemList = ["name", "price"];
   let selectedSortItem = sortItemList[sortItem];
   //sortOrder filter
   let selectedSortOrder = sortOrder === "asc" ? 1 : -1;
 
-  const products = categories
-    ? await Product.find({
-        category: { $in: categories.split(",") },
-      })
-        .find({ price: priceList[priceIndex] })
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .sort({ [selectedSortItem]: selectedSortOrder })
-    : await Product.find({ price: priceList[priceIndex] })
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .sort({ [selectedSortItem]: selectedSortOrder });
+  //query
+  let query = Product.find({ price: priceList[priceIndex] });
+  //filter
+  if (categories) {
+    query = query.find({ "category.name": { $in: categories.split(",") } });
+  }
+
+  query = query
+    .skip((page - 1) * pageSize)
+    .limit(parseInt(pageSize))
+    .sort({ [selectedSortItem]: selectedSortOrder });
+
+  const products = await query;
   //console.log(`records fetched: ${products}`);
   return products;
 }
